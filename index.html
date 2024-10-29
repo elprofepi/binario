@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor Binario a Decimal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .bits-container {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .bit {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bit.off {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+
+        .bit.on {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .bit:hover {
+            transform: translateY(-2px);
+        }
+
+        .powers {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .power {
+            width: 60px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #2d3748;
+            padding: 1rem;
+            background-color: #f7fafc;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .button:hover {
+            background-color: #3182ce;
+        }
+
+        @media (max-width: 600px) {
+            .bit {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .power {
+                width: 50px;
+            }
+        }
+
+        .animation {
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Convertidor Binario a Decimal</h1>
+        <div class="bits-container" id="bits-container"></div>
+        <div class="powers" id="powers"></div>
+        <div class="result" id="result">Decimal: 0</div>
+        <div class="controls">
+            <button class="button" onclick="resetBits()">Reiniciar</button>
+            <button class="button" onclick="randomBits()">Aleatorio</button>
+        </div>
+    </div>
+
+    <script>
+        const bits = Array(8).fill(0);
+        
+        function createBits() {
+            const container = document.getElementById('bits-container');
+            container.innerHTML = '';
+            bits.forEach((bit, index) => {
+                const button = document.createElement('button');
+                button.className = `bit ${bit ? 'on' : 'off'}`;
+                button.textContent = bit;
+                button.onclick = () => toggleBit(index);
+                container.appendChild(button);
+            });
+
+            const powersContainer = document.getElementById('powers');
+            powersContainer.innerHTML = '';
+            bits.forEach((_, index) => {
+                const power = document.createElement('div');
+                power.className = 'power';
+                power.innerHTML = `2<sup>${7-index}</sup>`;
+                powersContainer.appendChild(power);
+            });
+        }
+
+        function toggleBit(index) {
+            bits[index] = bits[index] ? 0 : 1;
+            updateDisplay();
+            
+            // Añadir animación
+            const bitElement = document.querySelectorAll('.bit')[index];
+            bitElement.classList.add('animation');
+            setTimeout(() => bitElement.classList.remove('animation'), 300);
+        }
+
+        function binaryToDecimal() {
+            return bits.reduce((acc, bit, index) => {
+                return acc + bit * Math.pow(2, bits.length - 1 - index);
+            }, 0);
+        }
+
+        function updateDisplay() {
+            createBits();
+            document.getElementById('result').textContent = `Decimal: ${binaryToDecimal()}`;
+        }
+
+        function resetBits() {
+            bits.fill(0);
+            updateDisplay();
+        }
+
+        function randomBits() {
+            bits.forEach((_, index) => {
+                bits[index] = Math.random() > 0.5 ? 1 : 0;
+            });
+            updateDisplay();
+        }
+
+        // Inicializar
+        createBits();
+    </script>
+</body>
+</html>
